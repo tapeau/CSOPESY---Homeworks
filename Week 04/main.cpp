@@ -5,7 +5,7 @@
 
 // Function prototypes
 void setCursorPos(int x, int y);
-CONSOLE_SCREEN_BUFFER_INFO getConsoleBuffer();
+int getCursorPosY();
 void printProcess(std::string str, int charLimit, char alignment);
 void printConsole(std::string str, int charLimit, char alignment);
 
@@ -22,23 +22,23 @@ int main()
     // Print GPU summary table header
     std::cout << "+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI ";
     printConsole(gpuSpecs[0], 22, 'l');
-    setCursorPos(36, getConsoleBuffer().dwCursorPosition.Y); std::cout << "Driver Version: "; printConsole(gpuSpecs[1], 14, 'l');
-    setCursorPos(67, getConsoleBuffer().dwCursorPosition.Y); std::cout << "CUDA Version: "; printConsole(gpuSpecs[2], 7, 'l'); std::cout << "  ";
+    setCursorPos(36, getCursorPosY()); std::cout << "Driver Version: "; printConsole(gpuSpecs[1], 14, 'l');
+    setCursorPos(67, getCursorPosY()); std::cout << "CUDA Version: "; printConsole(gpuSpecs[2], 7, 'l'); std::cout << "  ";
     std::cout << "|\n|-----------------------------------------+------------------------+----------------------+\n| GPU  Name                     TCC/WDDM  | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n| ";
 
     // Print GPU summary table values
-    printConsole(gpuSpecs[3], 3, 'r'); setCursorPos(7, getConsoleBuffer().dwCursorPosition.Y);
-    printConsole(gpuSpecs[6], 23, 'l'); setCursorPos(31, getConsoleBuffer().dwCursorPosition.Y);
+    printConsole(gpuSpecs[3], 3, 'r'); setCursorPos(7, getCursorPosY());
+    printConsole(gpuSpecs[6], 23, 'l'); setCursorPos(31, getCursorPosY());
     printConsole(gpuSpecs[7], 9, 'r'); std::cout << "  | "; printConsole(gpuSpecs[11], 18, 'r'); std::cout << " ";
     printConsole(gpuSpecs[12], 3, 'r'); std::cout << " | "; printConsole(gpuSpecs[16], 20, 'r'); std::cout << " |\n| ";
     printConsole(gpuSpecs[4], 4, 'l'); std::cout << " "; printConsole(gpuSpecs[5], 4, 'r');
-    setCursorPos(15, getConsoleBuffer().dwCursorPosition.Y); printConsole(gpuSpecs[8], 2, 'r'); setCursorPos(28, getConsoleBuffer().dwCursorPosition.Y);
+    setCursorPos(15, getCursorPosY()); printConsole(gpuSpecs[8], 2, 'r'); setCursorPos(28, getCursorPosY());
     printConsole(gpuSpecs[9], 5, 'r'); std::cout << " / "; printConsole(gpuSpecs[10], 5, 'r'); std::cout << " |  ";
     printConsole(gpuSpecs[13], 9, 'r'); std::cout << " / "; printConsole(gpuSpecs[14], 9, 'r'); std::cout << " |";
-    setCursorPos(72, getConsoleBuffer().dwCursorPosition.Y); printConsole(gpuSpecs[15], 4, 'r');
-    setCursorPos(79, getConsoleBuffer().dwCursorPosition.Y); printConsole(gpuSpecs[17], 10, 'r');
+    setCursorPos(72, getCursorPosY()); printConsole(gpuSpecs[15], 4, 'r');
+    setCursorPos(79, getCursorPosY()); printConsole(gpuSpecs[17], 10, 'r');
     std::cout << " |\n|";
-    setCursorPos(42, getConsoleBuffer().dwCursorPosition.Y); std::cout << "|"; setCursorPos(67, getConsoleBuffer().dwCursorPosition.Y); std::cout << "| "; printConsole(gpuSpecs[16], 20, 'r'); std::cout << " |\n+-----------------------------------------+------------------------+----------------------+\n";
+    setCursorPos(42, getCursorPosY()); std::cout << "|"; setCursorPos(67, getCursorPosY()); std::cout << "| "; printConsole(gpuSpecs[16], 20, 'r'); std::cout << " |\n+-----------------------------------------+------------------------+----------------------+\n";
     
     // Print process table
     // Process list represented as 2-D array
@@ -52,14 +52,14 @@ int main()
     std::cout << "\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n";
     for (int i = 0; i < 5; i++) {
         std::cout << "|";
-        setCursorPos(3, getConsoleBuffer().dwCursorPosition.Y); printConsole(processes[i][0], 3, 'r');
-        setCursorPos(9, getConsoleBuffer().dwCursorPosition.Y); printConsole(processes[i][1], 3, 'l');
-        setCursorPos(14, getConsoleBuffer().dwCursorPosition.Y); printConsole(processes[i][2], 3, 'l');
-        setCursorPos(18, getConsoleBuffer().dwCursorPosition.Y); printConsole(processes[i][3], 9, 'r');
-        setCursorPos(28, getConsoleBuffer().dwCursorPosition.Y); printConsole(processes[i][4], 6, 'r');
-        setCursorPos(37, getConsoleBuffer().dwCursorPosition.Y); printProcess(processes[i][5], 38, 'l');
-        setCursorPos(81, getConsoleBuffer().dwCursorPosition.Y); printConsole(processes[i][6], 3, 'r');
-        setCursorPos(90, getConsoleBuffer().dwCursorPosition.Y); std::cout << "|\n";
+        setCursorPos(3, getCursorPosY()); printConsole(processes[i][0], 3, 'r');
+        setCursorPos(9, getCursorPosY()); printConsole(processes[i][1], 3, 'l');
+        setCursorPos(14, getCursorPosY()); printConsole(processes[i][2], 3, 'l');
+        setCursorPos(18, getCursorPosY()); printConsole(processes[i][3], 9, 'r');
+        setCursorPos(28, getCursorPosY()); printConsole(processes[i][4], 6, 'r');
+        setCursorPos(37, getCursorPosY()); printProcess(processes[i][5], 38, 'l');
+        setCursorPos(81, getCursorPosY()); printConsole(processes[i][6], 3, 'r');
+        setCursorPos(90, getCursorPosY()); std::cout << "|\n";
     }
     std::cout << "+-----------------------------------------------------------------------------------------+\n";
 
@@ -72,12 +72,12 @@ void setCursorPos(int x, int y)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), { (SHORT)x, (SHORT)y });
 }
 
-// Function to get current console buffer info
-CONSOLE_SCREEN_BUFFER_INFO getConsoleBuffer()
+// Function to get the current Y-axis position of console cursor
+int getCursorPosY()
 {
     CONSOLE_SCREEN_BUFFER_INFO consoleBuffer;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &consoleBuffer);
-    return consoleBuffer;
+    return consoleBuffer.dwCursorPosition.Y;
 }
 
 // Function to print a process name inside the process table (according to nvidia-smi format)
