@@ -3,59 +3,83 @@
 #include <string>
 #include <conio.h>
 #include <vector>
+#include <thread>
+#include <mutex>
+#include <atomic>
 
-// Encapsulate marquee console functionalities as one class
 class MarqueeConsole
 {
     std::string str{"Hello world in marquee!"}, currentInput;  // String to be displayed and current user input
     int windowWidth{}, windowHeight{}, strX{}, strY{}, strXDirection{1}, strYDirection{1}; // Console dimensions, string position and movement direction
     std::vector<std::string> commandHistory;  // To store command history
     CONSOLE_SCREEN_BUFFER_INFO consoleBuffer; // Structure to store console buffer information
+    std::mutex consoleMutex;  // Mutex for console access synchronization
+    std::atomic<bool> running{true}; // Flag to control the loop in both threads
 
 public:
-    // Function to start the marquee and handle the main loop
     void start()
     {
         updateScreenSize();
         strX = (windowWidth - str.size()) / 2;
         strY = (windowHeight + 3) / 2;
-        
-        // Infinite loop to update the marquee display
-        while (true)
-        {
-            pollKeyboard();
-            updateMarquee();
-            Sleep(5);
-        }
+
+        // Start the threads for keyboard polling and marquee update
+        std::thread keyboardThread(&MarqueeConsole::pollKeyboard, this);
+        std::thread marqueeThread(&MarqueeConsole::updateMarquee, this);
+
+        // Wait for both threads to finish (this will never happen in the current implementation)
+        keyboardThread.join();
+        marqueeThread.join();
     }
 
 private:
     // Function to check for keyboard input and process it
     void pollKeyboard()
     {
-        if (_kbhit())
+        while (running)
         {
-            char key = _getch();
-            if (key == 13)
+            if (_kbhit())
             {
-                commandHistory.push_back("Command processed in MARQUEE_CONSOLE: " + currentInput);
-                currentInput.clear();
+                char key = _getch();
+                std::lock_guard<std::mutex> lock(consoleMutex); // Ensure synchronized access to shared resources
+                if (key == 13)  // Enter key
+                {
+                    if (currentInput == "exit") // Stop the program if user types 'exit'
+                    {
+                        running = false;
+                    }
+                    else
+                    {
+                        commandHistory.push_back("Command processed in MARQUEE_CONSOLE: " + currentInput);
+                        currentInput.clear();
+                    }
+                }
+                else if (key == 8 && !currentInput.empty())  // Backspace key
+                    currentInput.pop_back();
+                else
+                    currentInput.push_back(key);
             }
-            else if (key == 8 && !currentInput.empty()) currentInput.pop_back();
-            else currentInput.push_back(key);
+            Sleep(5);
         }
     }
 
-    // Function to update the marquee display
+    // Function to continuously update the marquee display
     void updateMarquee()
     {
-        system("cls");
-        printHeader();
-        updateScreenSize();
-        moveString();
-        printString();
-        printInput();
-        printHistory();
+        while (running)
+        {
+            {
+                std::lock_guard<std::mutex> lock(consoleMutex); // Ensure synchronized access to shared resources
+                system("cls");
+                printHeader();
+                updateScreenSize();
+                moveString();
+                printString();
+                printInput();
+                printHistory();
+            }
+            Sleep(5); // Sleep for a short duration to control update speed
+        }
     }
 
     // Function to print the header of the marquee console
@@ -116,6 +140,7 @@ private:
 int main()
 {
     // Create an instance of MarqueeConsole and start it
-    MarqueeConsole().start();
+    MarqueeConsole console;
+    console.start();
     return 0;
 }
